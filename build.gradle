@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.1.0-M1'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.bmcho'
+version = '0.0.1-SNAPSHOT'
+description = 'springboot-mongodb'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-mongodb-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    testRuntimeOnly 'net.bytebuddy:byte-buddy-agent:1.18.4'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+
+    doFirst {
+        def agentJar = configurations.testRuntimeClasspath.files.find { it.name.contains('byte-buddy-agent') }
+        jvmArgs "-javaagent:${agentJar.absolutePath}"
+    }
+}

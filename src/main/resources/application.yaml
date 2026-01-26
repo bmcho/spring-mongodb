@@ -1,0 +1,19 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    org.springframework.data.mongodb.repository.query: DEBUG
+    org.mongodb.driver.protocol.command: DEBUG
+    org.mongodb.driver.protocol.query: DEBUG
+
+spring:
+  application:
+    name: springboot-mongodb
+
+
+  mongodb:
+    host: localhost
+    port: 27017
+    database: test

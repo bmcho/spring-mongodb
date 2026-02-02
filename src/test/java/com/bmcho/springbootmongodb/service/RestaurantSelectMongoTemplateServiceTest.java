@@ -17,10 +17,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-class RestaurantMongoTemplateServiceTest {
+class RestaurantSelectMongoTemplateServiceTest {
 
     @Autowired
-    private RestaurantMongoTemplateService restaurantMongoTemplateService;
+    private RestaurantSelectMongoTemplateService restaurantSelectMongoTemplateService;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -29,7 +29,7 @@ class RestaurantMongoTemplateServiceTest {
         String borough = "Brooklyn";
         int limit = 10;
 
-        List<Restaurant> result = restaurantMongoTemplateService.findByBoroughWithLimit(borough, limit);
+        List<Restaurant> result = restaurantSelectMongoTemplateService.findByBoroughWithLimit(borough, limit);
 
         assertEquals(limit, result.size());
         System.out.println(objectMapper.writeValueAsString(result));
@@ -43,7 +43,7 @@ class RestaurantMongoTemplateServiceTest {
 
 
         List<Restaurant> result =
-                restaurantMongoTemplateService.findByCuisineWithLimitSortByName(cuisine, direction, limit);
+                restaurantSelectMongoTemplateService.findByCuisineWithLimitSortByName(cuisine, direction, limit);
 
         assertEquals(limit, result.size());
         System.out.println(objectMapper.writeValueAsString(result));
@@ -61,7 +61,7 @@ class RestaurantMongoTemplateServiceTest {
 
         List<String> boroughs = List.of("Manhattan", "Queens");
         List<BoroughCount> result =
-                restaurantMongoTemplateService.aggregateRestaurantCountByBorough(boroughs);
+                restaurantSelectMongoTemplateService.aggregateRestaurantCountByBorough(boroughs);
 
         assertThat(result).hasSize(2);
         for (BoroughCount boroughCount : result) {
@@ -79,14 +79,14 @@ class RestaurantMongoTemplateServiceTest {
     void findRestaurantsByAddressZipcode() {
         String zipcode = "11225"; // 9개
 
-        List<Restaurant> result = restaurantMongoTemplateService.findRestaurantsByAddressZipcode(zipcode);
+        List<Restaurant> result = restaurantSelectMongoTemplateService.findRestaurantsByAddressZipcode(zipcode);
         assertThat(result).hasSize(9);
     }
 
     @Test
     void findRestaurantsByContainingName() {
         String containingName = "Donut"; // 50개
-        List<Restaurant> result = restaurantMongoTemplateService.findRestaurantsByContainingName(containingName);
+        List<Restaurant> result = restaurantSelectMongoTemplateService.findRestaurantsByContainingName(containingName);
         assertThat(result.getFirst().getName()).contains(containingName);
         assertThat(result.size()).isEqualTo(50);
     }
@@ -94,7 +94,7 @@ class RestaurantMongoTemplateServiceTest {
     @Test
     void findRestaurantsByStartName() {
         String startName = "Wild"; //1개
-        List<Restaurant> result = restaurantMongoTemplateService.findRestaurantsByStartName(startName);
+        List<Restaurant> result = restaurantSelectMongoTemplateService.findRestaurantsByStartName(startName);
         assertThat(result.getFirst().getName()).contains(startName);
         assertThat(result).hasSize(1);
     }
@@ -102,7 +102,7 @@ class RestaurantMongoTemplateServiceTest {
     @Test
     void findRestaurantByRestaurantId() {
         String restaurantId = "40357217";
-        Optional<Restaurant> result = restaurantMongoTemplateService.findRestaurantByRestaurantId(restaurantId);
+        Optional<Restaurant> result = restaurantSelectMongoTemplateService.findRestaurantByRestaurantId(restaurantId);
         assertThat(result.isPresent()).isTrue();
         assertThat(result.get().getRestaurantId()).isEqualTo(restaurantId);
     }
@@ -111,7 +111,7 @@ class RestaurantMongoTemplateServiceTest {
     void findByGradesGrade() {
         String grade = "A";
         int limit = 30;
-        List<Restaurant> result = restaurantMongoTemplateService.findByGradesGrade(grade, limit);
+        List<Restaurant> result = restaurantSelectMongoTemplateService.findByGradesGrade(grade, limit);
         assertThat(result).hasSize(limit);
 
     }
@@ -120,7 +120,7 @@ class RestaurantMongoTemplateServiceTest {
     void findByGradesGradeScore() {
         int score = 50; //76
         int limit = 0;
-        List<Restaurant> result = restaurantMongoTemplateService.findByGradesGradeScore(score, limit);
+        List<Restaurant> result = restaurantSelectMongoTemplateService.findByGradesGradeScore(score, limit);
         assertThat(result).hasSize(76);
 
     }
@@ -128,14 +128,14 @@ class RestaurantMongoTemplateServiceTest {
     @Test
     void findByGradesSizeGte() {
         int size = 5; //2252
-        List<Restaurant> result = restaurantMongoTemplateService.findByGradesSizeGte(size);
+        List<Restaurant> result = restaurantSelectMongoTemplateService.findByGradesSizeGte(size);
         assertThat(result).hasSize(2252);
     }
 
     @Test
     void findWithProjection() {
         String[] includes = {"name", "borough", "cuisine"};
-        List<Restaurant> result = restaurantMongoTemplateService.findWithProjection(includes);
+        List<Restaurant> result = restaurantSelectMongoTemplateService.findWithProjection(includes);
         Restaurant restaurant = result.getFirst();
 
         System.out.println(objectMapper.writeValueAsString(restaurant));
@@ -147,7 +147,7 @@ class RestaurantMongoTemplateServiceTest {
         String borough = "Manhattan";
         Sort.Direction direction = Sort.Direction.DESC;
         int limit = 10;
-        List<Restaurant> result = restaurantMongoTemplateService.findByBoroughSortByGradeDate(borough, limit, direction);
+        List<Restaurant> result = restaurantSelectMongoTemplateService.findByBoroughSortByGradeDate(borough, limit, direction);
         Restaurant restaurant = result.getFirst();
         assertThat(restaurant.getRestaurantId()).isEqualTo(firstId);
     }
@@ -156,7 +156,7 @@ class RestaurantMongoTemplateServiceTest {
     void findByBoroughWithPagination() {
         String borough = "Queens";
         Pageable pageable = PageRequest.of(2, 10);
-        List<Restaurant> result = restaurantMongoTemplateService.findByBoroughWithPagination(borough, pageable);
+        List<Restaurant> result = restaurantSelectMongoTemplateService.findByBoroughWithPagination(borough, pageable);
         assertThat(result).hasSize(pageable.getPageSize());
         assertThat(result.getFirst().getBorough()).isEqualTo(borough);
     }
@@ -165,7 +165,7 @@ class RestaurantMongoTemplateServiceTest {
     void findGradeHasAndNo() {
         String has = "A"; //2247개
         String no= "B";
-        List<Restaurant> result = restaurantMongoTemplateService.findGradeHasAndNo(has, no);
+        List<Restaurant> result = restaurantSelectMongoTemplateService.findGradeHasAndNo(has, no);
         assertThat(result).hasSize(2247);
     }
 }
